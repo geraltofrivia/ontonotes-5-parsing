@@ -116,7 +116,7 @@ def main():
                         for idx in range(n):
                             parsed[idx]['language'] = language
                         if splitting is None:
-                            data_for_training += {'filename': cur_name, 'data': parsed}
+                            data_for_training.append({'filename': cur_name, 'data': parsed})
                         else:
                             dst_key = check_onf_name(cur_name, splitting)
                             if dst_key == 'train':
