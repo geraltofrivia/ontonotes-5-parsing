@@ -687,7 +687,7 @@ def parse_file(onf_name: str, src_name_for_log: str = '') -> \
             'text': plain_text,
             'morphology': dict(),
             'syntax': dict(),
-            'entities': dict()
+            'entities': dict(),
         }
         previous_entity = 'O'
         entity_start = -1
@@ -817,6 +817,8 @@ def parse_file(onf_name: str, src_name_for_log: str = '') -> \
         else:
             start_idx = end_idx
     if not ok:
+        # for d in all_data:
+        #     d['filename'] = src_name_for_log
         return all_data, err_msg
     return all_data, ''
 

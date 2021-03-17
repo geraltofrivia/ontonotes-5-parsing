@@ -4,6 +4,7 @@ import gc
 import json
 import os
 import random
+import traceback
 import tarfile
 from tempfile import NamedTemporaryFile
 
@@ -82,10 +83,11 @@ def main():
         onf_names = list(map(
             lambda it2: it2.name,
             filter(
-                lambda it1: it1.isfile() and it1.name.endswith('.onf'),
+                lambda it1: it1.isfile() and it1.name.endswith('.onf') and it1.name.startswith('ontonotes-release-5.0/data/files/data/english/annotations/nw/wsj'),
                 tgz_fp.getmembers()
             )
         ))
+        # onf_names = onf_names[:100]
         number_of_members = len(onf_names)
         err_msg = 'There are no labeled texts with *.onf extension in the ' \
                   '"{0}"!'.format(src_file_name)
@@ -102,7 +104,11 @@ def main():
                     with open(tmp_name, 'wb') as tmp_fp:
                         tmp_fp.write(binary_data)
                     del binary_data, binary_stream
-                    parsed, err_msg_2 = parse_file(tmp_name, cur_name)
+                    try:
+                        parsed, err_msg_2 = parse_file(tmp_name, cur_name)
+                    except ValueError:
+                        traceback.print_exc()
+                        continue
                     if err_msg_2 != '':
                         files_with_errors.append((cur_name, err_msg_2))
                     n = len(parsed)
@@ -110,7 +116,7 @@ def main():
                         for idx in range(n):
                             parsed[idx]['language'] = language
                         if splitting is None:
-                            data_for_training += parsed
+                            data_for_training += {'filename': cur_name, 'data': parsed}
                         else:
                             dst_key = check_onf_name(cur_name, splitting)
                             if dst_key == 'train':
@@ -125,8 +131,7 @@ def main():
                         os.remove(tmp_name)
             gc.collect()
 
-    with codecs.open(dst_file_name, mode='w', encoding='utf-8',
-                     errors='ignore') as fp:
+    with codecs.open(dst_file_name, mode='w', encoding='utf-8') as fp:
         random.shuffle(data_for_training)
         res = {'TRAINING': data_for_training}
         if splitting is None:
@@ -140,6 +145,8 @@ def main():
             random.shuffle(data_for_testing)
             res['TESTING'] = data_for_testing
         json.dump(res, fp=fp, ensure_ascii=False, indent=4, sort_keys=True)
+    import pickle
+    pickle.dump(res, open('parsed/dump.pkl','wb+'))
 
     print('{0} files are processed.'.format(number_of_members))
     n_errors = len(files_with_errors)
