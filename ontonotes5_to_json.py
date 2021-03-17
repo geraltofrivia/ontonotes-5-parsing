@@ -132,7 +132,7 @@ def main():
             gc.collect()
 
     with codecs.open(dst_file_name, mode='w', encoding='utf-8') as fp:
-        random.shuffle(data_for_training)
+        # random.shuffle(data_for_training)
         res = {'TRAINING': data_for_training}
         if splitting is None:
             assert len(data_for_validation) == 0
@@ -140,9 +140,9 @@ def main():
         else:
             assert len(data_for_validation) > 0
             assert len(data_for_testing) > 0
-            random.shuffle(data_for_validation)
+            # random.shuffle(data_for_validation)
             res['VALIDATION'] = data_for_validation
-            random.shuffle(data_for_testing)
+            # random.shuffle(data_for_testing)
             res['TESTING'] = data_for_testing
         json.dump(res, fp=fp, ensure_ascii=False, indent=4, sort_keys=True)
 
