@@ -68,7 +68,7 @@ def main():
         err_msg = 'Directory "{0}" does not exist!'.format(ids_dir_name)
         assert os.path.isdir(dst_file_dir), err_msg
 
-    data_for_training = []
+    data_for_training = {}
     data_for_validation = []
     data_for_testing = []
     if ids_dir_name is None:
@@ -116,7 +116,7 @@ def main():
                         for idx in range(n):
                             parsed[idx]['language'] = language
                         if splitting is None:
-                            data_for_training.append({'filename': cur_name, 'data': parsed})
+                            data_for_training[cur_name] = parsed
                         else:
                             dst_key = check_onf_name(cur_name, splitting)
                             if dst_key == 'train':
