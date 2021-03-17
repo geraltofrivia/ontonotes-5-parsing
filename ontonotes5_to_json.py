@@ -145,8 +145,6 @@ def main():
             random.shuffle(data_for_testing)
             res['TESTING'] = data_for_testing
         json.dump(res, fp=fp, ensure_ascii=False, indent=4, sort_keys=True)
-    import pickle
-    pickle.dump(res, open('parsed/dump.pkl','wb+'))
 
     print('{0} files are processed.'.format(number_of_members))
     n_errors = len(files_with_errors)
